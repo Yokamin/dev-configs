@@ -1,7 +1,9 @@
-# Dev Environment Setup Guide
+# Powershell profile and module setup
 
 ### Description
-Small script to set up PowerShell 7 with a git tracked profile and modules.
+In case I am setting it up on a new pc or something, I'll try to keep this repo up-to-date as far as my profile/modules setup etc...
+
+Also a quick guide for setting it up just in case
 
 ---
 
@@ -27,47 +29,53 @@ winget install --id Git.Git --source winget --accept-source-agreements --accept-
 
 ---
 
-## Steps to Run the Setup Script
+## Setup PowerShell
 
-### 1. **Clone the Repository**
-Open your terminal and navigate to your home folder:  
+### 0. **Optional: Old install script**
+The old install script would basically automate the process of installing PS7 and setting as admin, but it's a bit flaky and I don't care enough to keep it working.
+It has an old version of README.md within its folder (old_install_script)
+
+### 1. **Install latest PowerShell 7**
+In PowerShell run:
 ```powershell
-cd $HOME
+winget install --id Microsoft.Powershell --source winget --accept-source-agreements --accept-package-agreements
 ```
 
-Clone this repository:  
-```powershell
-git clone {link-to-repository}
-```
+### 2. **Set PowerShell 7 as default and to run as admin**
+In Windows Terminal:
+1. Open the **Settings** tab and choose your newly installed PowerShell 7 as default
+2. Open the **Profiles** settings for PowerShell 7:
+- Enable **Run this profile as Administrator**
+- Set starting directory to `%USERPROFILE%`
+- Optional: Appearance > Color scheme > Solarized Dark
 
-Navigate to the scripts folder:  
-```powershell
-cd .\.dev-configs\Scripts\
-```
+### 3. **Setup PowerShell Profile and Module**
+Optional: Setup VSCode first for a better editor experience and opening files with `code`
+
+1. Open up $PROFLIE: `code $PROFLIE`
+2. Paste content from GitHub profile to here and save
+- Should already have Chocolatey stuff added, double-check after installing chocolatey if it messed it up or duped lines in your profile
+3. In explorer, navigate to `C:\Users\{your_user}\Documents\PowerShell\Modules`
+- Paste modules from GitHub to Modules folder
+- If Modules folder doesn't exist, simply create it
 
 ---
 
-### 2. **Run the PowerShell Setup Script**
-**Set Execution Policy (to allow running the script):**  
+## Install Chocolatey package manager and FiraCode font
+
+### 1. **Install Chocolatey package manager**
+Run `Get-ExecutionPolicy` to see if you have privileges, or just straight to command:
 ```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 ```
+Run `choco` after install to confirm that it works
 
-**Run the script:**  
-```powershell
-.\SetupPowerShell.ps1
-```
+### 2. **FiraCode set-up**
+Run `choco install firacode` to install
 
----
-
-### 3. **What the Script Does**
-- Ensures that PowerShell 7 is installed and running as Administrator  
-- Sets PowerShell 7 as the default for Windows Terminal  
-- Configures a custom PowerShell profile  
-- Adds a custom modules folder to the `PSModulePath`  
-- Reloads your PowerShell profile and relaunches Windows Terminal  
-
-> **Note:** More details about the PowerShell profile and modules will be added soon.
+### 3. **Set FiraCode as font in terminal**
+Restart terminal if already open
+In terminal settings, go to your profile's settings and choose font FiraCode
 
 ---
 
@@ -119,25 +127,3 @@ Sign into your Microsoft or GitHub account to enable settings sync and automatic
 > - Python  
 > - PowerShell  
 > - Prettier  
-
----
-
-## Directory Structure
-```
-.dev-configs/
-│── PowerShell/
-│   │── Modules/               # Custom PowerShell modules (currently empty)
-│   └── Profiles/
-│       └── Microsoft.PowerShell_profile.ps1  # PowerShell profile script
-│── Scripts/
-│   └── SetupPowerShell.ps1    # PowerShell setup script
-└── README.md   # This document
-```
-
----
-
-## Future Plans
-- Add pre-configured PowerShell modules and profiles  
-- Provide sample VS Code settings and keybindings  
-- Setup typical extensions in VSCode, perhaps add a "install extensions from list" command
-

@@ -100,11 +100,29 @@ $customModulesPath = Join-Path (Split-Path $PSScriptRoot -Parent) "PowerShell\Mo
 $env:PSModulePath = "$customModulesPath;" + $env:PSModulePath
 Write-Host "PowerShell module path configured: $customModulesPath"
 
-# Step 7: Load PowerShell profile from the repo
-$ProfilePath = Join-Path (Split-Path $PSScriptRoot -Parent) "PowerShell\Profiles\Microsoft.PowerShell_profile.ps1"
-if (Test-Path $ProfilePath) {
-    . $ProfilePath
-    Write-Host "PowerShell profile loaded from $ProfilePath"
+# Step 7: Link Git-tracked PowerShell profile to default PowerShell profile
+$defaultProfilePath = "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
+$gitTrackedProfilePath = Join-Path (Split-Path $PSScriptRoot -Parent) "PowerShell\Profiles\Microsoft.PowerShell_profile.ps1"
+
+if (!(Test-Path $defaultProfilePath)) {
+    New-Item -ItemType File -Path $defaultProfilePath -Force
+}
+
+# Check if the default profile already references the Git-tracked profile
+$existingContent = Get-Content -Path $defaultProfilePath -ErrorAction SilentlyContinue
+if ($existingContent -notcontains ". `"$gitTrackedProfilePath`"") {
+    Add-Content -Path $defaultProfilePath -Value ". `"$gitTrackedProfilePath`""
+    Write-Host "Linked Git-tracked profile to the default profile at $defaultProfilePath"
+} else {
+    Write-Host "Default profile already references the Git-tracked profile."
+}
+
+# Load the Git-tracked profile
+if (Test-Path $gitTrackedProfilePath) {
+    . $gitTrackedProfilePath
+    Write-Host "PowerShell profile loaded from $gitTrackedProfilePath"
+} else {
+    Write-Host "Git-tracked profile not found at $gitTrackedProfilePath"
 }
 
 # Step 8: Gather summary information and relaunch Windows Terminal
